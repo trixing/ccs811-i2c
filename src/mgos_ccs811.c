@@ -156,6 +156,17 @@ bool mgos_ccs811_setDriveMode(struct mgos_ccs811 *sensor, enum mgos_ccs811_drive
   return mgos_i2c_write_reg_b(sensor->i2c, sensor->i2caddr, MGOS_CCS811_REG_MEAS_MODE, meas_mode);
 }
 
+bool mgos_ccs811_setEnvData(struct mgos_ccs811 *sensor, float temperature, float humidity) {
+  // Temperature is an offset from 25C in 1/512 steps
+  uint16_t t = 0x6400 + (temperature - 25) * 512;
+  // Humidity is measured in 1/512 steps
+  uint16_t h = humidity * 512 ;
+  // Big Endian, Humidity first, Temperature second
+  uint8_t buf[4] = {h >> 8, h & 0xff, t >> 8, t & 0xff};
+
+  return mgos_i2c_write_reg_n(sensor->i2c, sensor->i2caddr, MGOS_CCS811_REG_ENV_DATA, 4, buf);
+}
+
 void mgos_ccs811_destroy(struct mgos_ccs811 **sensor) {
   if (!*sensor) {
     return;

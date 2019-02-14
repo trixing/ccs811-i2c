@@ -81,6 +81,14 @@ bool mgos_ccs811_setDriveMode(struct mgos_ccs811 *sensor, enum mgos_ccs811_drive
 bool mgos_ccs811_getDriveMode(struct mgos_ccs811 *sensor, uint8_t *mode);
 
 /*
+ * Set the environmental data for the CCS811 sensor to compensate for changes in
+ * environmental conditions. Temperature has to be within 0 - 50C, humidity
+ * between 0 and 100%.
+ * Returns true on success, false otherwise.
+ */
+bool mgos_ccs811_setEnvData(struct mgos_ccs811 *sensor, float temperature, float humidity);
+
+/*
  * The sensor will be polled for its effective CO2 data. If the poll
  * has occured in the last `MGOS_CCS811_READ_DELAY` seconds, the cached data is
  * used (so as not to repeatedly poll the bus upon subsequent calls).
